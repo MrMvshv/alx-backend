@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Infer appropriate time zone"""
 from flask import Flask, render_template, request, g
 from flask_babel import Babel
 import pytz
