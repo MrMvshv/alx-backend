@@ -1,38 +1,47 @@
 #!/usr/bin/env python3
-""" force a particular locale"""
+"""Force locale with URL parameter
+"""
+
+
 from flask import Flask, render_template, request
 from flask_babel import Babel
 
 
-app = Flask(__name__)
-babel = Babel(app)
-
-
 class Config(object):
-    """app configurations"""
-    LANGUAGES = ["en", "fr"]
+    """
+    Returns:
+    """
+    LANGUAGES = ['en', 'fr']
     BABEL_DEFAULT_LOCALE = 'en'
     BABEL_DEFAULT_TIMEZONE = 'UTC'
 
 
+# configuring the flask app
+app = Flask(__name__)
 app.config.from_object(Config)
-
-
-@app.route("/")
-def index():
-    """home route"""
-    return render_template('4-index.html')
+app.url_map.strict_slashes = False
+babel = Babel(app)
 
 
 @babel.localeselector
 def get_locale():
-    """retruns supported languages"""
-    supported_languages = app.config.get('LANGUAGES')
+    """
+    Returns locale
+    """
     locale = request.args.get('locale')
-    if locale and locale in supported_languages:
+    if locale in app.config['LANGUAGES']:
+        print(locale)
         return locale
-    return request.accept_languages.best_match(supported_languages)
+
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-if __name__ == "__main__":
+@app.route('/')
+def index():
+    """simple flask app
+    """
+    return render_template('4-index.html')
+
+
+if __name__ == '__main__':
     app.run(port="5000", host="0.0.0.0", debug=True)
